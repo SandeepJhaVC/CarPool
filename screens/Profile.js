@@ -62,14 +62,14 @@ export default class Profile extends Component {
         <SafeAreaView style={styles.droidSafeArea} />
 
         <View style={styles.titleContainer}>
-        <Text
-          style={
-            this.state.light_theme
-              ? styles.appTitleTextLight
-              : styles.appTitleText
-          }>
-          Car-Pool
-        </Text>
+          <Text
+            style={
+              this.state.light_theme
+                ? styles.appTitleTextLight
+                : styles.appTitleText
+            }>
+            Car-Pool
+          </Text>
         </View>
 
         <View style={styles.appIcon}>
@@ -137,38 +137,38 @@ const styles = StyleSheet.create({
     flex: 0.3,
     justifyContent: 'center',
     alignItems: 'center',
-    padding:10
+    padding: 10,
   },
   iconImage: {
-    padding:10,
+    padding: 10,
     width: '100%',
     height: '100%',
     resizeMode: 'contain',
   },
 
-  titleContainer:{
-    flex:0.1,
-    justifyContent:'center',
-    allignitems:'center',
+  titleContainer: {
+    flex: 0.1,
+    justifyContent: 'center',
+    allignitems: 'center',
   },
 
   appTitleText: {
-    margin:100,
-    padding:10,
+    margin: 100,
+    padding: 10,
     color: 'white',
     fontSize: RFValue(28),
   },
   appTitleTextLight: {
-    margin:100,
-    padding:10,
+    margin: 100,
+    padding: 10,
     color: 'black',
     fontSize: RFValue(28),
   },
 
   screenContainer: {
     flex: 0.85,
-    padding:50,
-    margin:5
+    padding: 50,
+    margin: 5,
   },
 
   nameText: {
@@ -198,5 +198,4 @@ const styles = StyleSheet.create({
     fontSize: RFValue(20),
     marginRight: RFValue(15),
   },
-
 });

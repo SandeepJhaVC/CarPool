@@ -22,7 +22,7 @@ const StackNav = () => {
       }}>
       <Stack.Screen name="Login" component={LoginScreen} />
       <Stack.Screen name="Register" component={Register} />
-      <Stack.Screen name="Dashboard" component={DrawerNavigator} />
+      <Stack.Screen name="Home" component={DrawerNavigator} />
     </Stack.Navigator>
   );
 };
