@@ -1,12 +1,12 @@
 {
   "expo": {
-    "name": "Story-Telling-App-87-S",
-    "slug": "Story-Telling-App-87-S",
-    "version": "1.0.0",
+    "name": "Car-Pool",
+    "slug": "carpool",
+    "version": "2.0.1",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "splash": {
-      "image": "./assets/splash.png",
+      "image": "./assets/graphic.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
@@ -17,22 +17,25 @@
       "**/*"
     ],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.sandeepjha.carpool"
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/adaptive-icon.png",
+        "foregroundImage": "./assets/icon.png",
         "backgroundColor": "#FFFFFF"
       },
-      "package": "com.sandeepJhaVc.carPool"
+      "package": "com.sandeepJhaVc.Car_Pool",
+      "versionCode": 2
     },
     "web": {
       "favicon": "./assets/favicon.png"
     },
     "extra": {
       "eas": {
-        "projectId": "46b3ba65-f8b3-4353-9142-ec0491015b76"
+        "projectId": "6f46db68-9c78-4a2d-8267-7782e85beb0d"
       }
-    }
+    },
+    "owner": "sandeepjha"
   }
 }

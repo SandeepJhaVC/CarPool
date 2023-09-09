@@ -2,7 +2,6 @@ import React from "react";
 import { createStackNavigator } from "@react-navigation/stack";
 import TabNavigator from "./TabNavigator";
 import Details from '../screens/Details'
-import RiderPage from './RiderPageRider'
 
 
 const Stack = createStackNavigator();
@@ -12,7 +11,10 @@ const StackNavigator = () => {
     <Stack.Navigator
       initialRouteName="Home"
       screenOptions={{
-        headerShown: false
+        headerShown: false,
+        presentation: 'Modal',
+        animationEnabled: true,
+        gestureEnabled:true,
       }}
     >
       <Stack.Screen name="Home" component={TabNavigator} />

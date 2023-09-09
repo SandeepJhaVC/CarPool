@@ -5,6 +5,7 @@ import { RFValue } from 'react-native-responsive-fontsize';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import firebase from 'firebase';
 import Car from '../screens/Car';
+import Rider from '../screens/Rider'
 
 const Tab = createMaterialBottomTabNavigator();
 

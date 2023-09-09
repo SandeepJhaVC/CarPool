@@ -3,18 +3,13 @@ import {
     View,
     Text,
     StyleSheet,
-    SafeAreaView,
-    Image,
-    ScrollView
 } from 'react-native';
-import Ionicons from 'react-native-vector-icons/Ionicons';
 import {RFValue} from 'react-native-responsive-fontsize';
 import firebase from 'firebase';
 
-import * as Font from 'expo-font';
-import * as SplashScreen from 'expo-splash-screen';
 
 import {Icon} from 'react-native-elements'
+
 
 export default class Details extends Component {
     constructor(props) {
@@ -50,9 +45,14 @@ export default class Details extends Component {
     
 
     render() {
-        if (!this.props.route.params) {
-            this.props.navigation.navigate('Home');
-        } else {
+      if (!this.props.route.params || !this.props.route.params.details) {
+        // Render some placeholder or loading content
+        return (
+          <View style={styles.appContainer}>
+            <Text>Loading...</Text>
+          </View>
+        );
+      } else {
             return (
                 <View style={
                     this.state.light_theme?styles.appContainerLight:styles.appContainer
@@ -80,7 +80,7 @@ export default class Details extends Component {
                                 fontSize: RFValue(30),
                                 padding: 5,
                                 margin: 5,
-                                fontWeight: 300,
+                                 
                                 color:this.state.light_theme?'#e6e6fa':'#00008b'
                             }
                         }>
@@ -100,7 +100,7 @@ export default class Details extends Component {
                                 fontSize: RFValue(30),
                                 padding: 5,
                                 margin: 5,
-                                fontWeight: 300,
+                                 
                                 color:this.state.light_theme?'#fff0f5':'#483d8b'
                             }
                         }>
@@ -118,7 +118,6 @@ export default class Details extends Component {
                                 fontSize: RFValue(20),
                                 padding: 5,
                                 marginLeft: 5,
-                                fontWeight: 250,
                                 color:this.state.light_theme?'#fffacd':'#a9a9a9'
                             }
                         }>
@@ -134,7 +133,6 @@ export default class Details extends Component {
                               fontSize: RFValue(20),
                               padding: 5,
                               marginLeft: 5,
-                              fontWeight: 250,
                               color:this.state.light_theme?'#fffacd':'#a9a9a9'
                             }
                         }>
@@ -151,7 +149,6 @@ export default class Details extends Component {
                               fontSize: RFValue(20),
                               padding: 5,
                               marginLeft: 5,
-                              fontWeight: 250,
                               color:this.state.light_theme?'#fffacd':'#a9a9a9'
                             }
                         }>
@@ -169,7 +166,7 @@ export default class Details extends Component {
                                 paddingTop: 50,
                                 marginRight: 5,
                                 fontStyle: 'italic',
-                                fontWeight: 300,
+                                 
                                 color:this.state.light_theme?'white':'black'
                             }
                         }>

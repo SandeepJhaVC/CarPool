@@ -23,16 +23,14 @@ export default class LoginScreen extends Component {
   }
 
   signIn = async (email, password) => {
-    firebase
-      .auth()
-      .signInWithEmailAndPassword(email, password)
-      .then(() => {
-        this.props.navigation.replace('Home');
-      })
-      .catch((error) => {
-        alert(error.message);
-      });
+    try {
+      await firebase.auth().signInWithEmailAndPassword(email, password);
+      this.props.navigation.replace('Home');
+    } catch (error) {
+      alert(error.message);
+    }
   };
+  
 
   render() {
     const { email, password } = this.state;

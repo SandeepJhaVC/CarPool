@@ -121,11 +121,11 @@ export default class Profile extends Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: 'black',
+    backgroundColor: '#2f4f4f',
   },
   containerLight: {
     flex: 1,
-    backgroundColor: 'white',
+    backgroundColor: '#87cefa',
   },
 
   droidSafeArea: {
