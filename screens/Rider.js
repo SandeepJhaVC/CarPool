@@ -2,10 +2,10 @@
 
 import React, { Component } from 'react';
 import { View, Text, StyleSheet, SafeAreaView, TouchableOpacity } from 'react-native';
-import firebase from 'firebase';
 import { FlatList } from 'react-native-gesture-handler';
 import { ListItem, Icon } from 'react-native-elements';
 import { RFValue } from 'react-native-responsive-fontsize';
+import firebase from '../config'
 
 export default class Rider extends Component {
   constructor(props) {
@@ -33,9 +33,9 @@ export default class Rider extends Component {
 
   componentWillUnmount() {
     // Remove the listener when the component is unmounted
-    this.dataRef.off('value', this.handleDataChange);
+    //this.dataRef.off('value', this.handleDataChange);
 
-    this.themeRef.off('value', this.handleThemeChange);
+    //this.themeRef.off('value', this.handleThemeChange);
   }
 
   handleDataChange = (snapshot) => {

@@ -10,7 +10,7 @@ import {
   Button,
 } from 'react-native';
 
-import firebase from 'firebase';
+import firebase from '../config';
 
 export default class Car extends Component {
   constructor(props) {
@@ -29,7 +29,9 @@ export default class Car extends Component {
     };
   }
 
+  
   componentDidMount() {
+    
     this.fetchUser();
 
     // Set up a real-time listener
@@ -85,7 +87,6 @@ export default class Car extends Component {
         .database()
         .ref('/details/' + Math.random().toString(36).slice(2))
         .set(details);
-
       alert('Submitted');
     } else {
       alert(
@@ -257,8 +258,11 @@ export default class Car extends Component {
           {this.isEnabled}
         </View>
       </View>
+    
+    
     );
   }
+  
 }
 
 const styles = StyleSheet.create({
@@ -283,7 +287,6 @@ const styles = StyleSheet.create({
     backgroundColor: '#f0f8ff',
     padding: 5,
     margin: 5,
-    justifyContent: 'center',
   },
   textContainer: {
     flex: 0.5,

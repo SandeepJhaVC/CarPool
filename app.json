@@ -2,7 +2,7 @@
   "expo": {
     "name": "Car-Pool",
     "slug": "carpool",
-    "version": "2.0.1",
+    "version": "3",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "splash": {
@@ -26,7 +26,7 @@
         "backgroundColor": "#FFFFFF"
       },
       "package": "com.sandeepJhaVc.Car_Pool",
-      "versionCode": 2
+      "versionCode": 3
     },
     "web": {
       "favicon": "./assets/favicon.png"

@@ -3,7 +3,7 @@ import { StyleSheet, View } from 'react-native';
 import { createMaterialBottomTabNavigator } from '@react-navigation/material-bottom-tabs';
 import { RFValue } from 'react-native-responsive-fontsize';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import firebase from 'firebase';
+import firebase from '../config';
 import Car from '../screens/Car';
 import Rider from '../screens/Rider'
 
@@ -28,7 +28,7 @@ export default class BottomTabNavigator extends Component {
 
   componentWillUnmount() {
     // Remove the listener when the component is unmounted
-    this.dataRef.off('value', this.handleDataChange);
+    //this.dataRef.off('value', this.handleDataChange);
   }
 
   handleDataChange = (snapshot) => {
@@ -58,7 +58,7 @@ export default class BottomTabNavigator extends Component {
               iconName = focused ? 'car' : 'car-outline';
             }
             return (
-              <Ionicons name={iconName} size={RFValue(25)} color={color} style={{padong:20}} />
+              <Ionicons name={iconName} size={RFValue(25)} color={color} style={{padding:0.5}} />
             );
           },
         })}

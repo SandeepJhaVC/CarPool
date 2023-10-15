@@ -7,15 +7,19 @@ import Register from './screens/Register';
 
 import DrawerNavigator from './navigation/DrawerNavigator';
 
-import firebase from "firebase";
-import { firebaseConfig } from "./config";
 
+//firebase.initializeApp(firebaseConfig);
 
-if (!firebase.apps.length) {
-  firebase.initializeApp(firebaseConfig);
+/*if (!firebase.apps.length) {
+  try {
+    firebase.initializeApp(firebaseConfig);
+  } catch (error) {
+  }
 } else {
   firebase.app();
-}
+}*/
+
+
 
 const Stack = createStackNavigator();
 

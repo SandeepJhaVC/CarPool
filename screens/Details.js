@@ -5,7 +5,7 @@ import {
     StyleSheet,
 } from 'react-native';
 import {RFValue} from 'react-native-responsive-fontsize';
-import firebase from 'firebase';
+import firebase from '../config';
 
 
 import {Icon} from 'react-native-elements'

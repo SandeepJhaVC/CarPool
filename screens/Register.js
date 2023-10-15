@@ -7,7 +7,7 @@ import {
   Image,
 } from 'react-native';
 
-import firebase from 'firebase';
+import firebase from '../config';
 
 export default class Register extends Component {
   constructor(props) {
@@ -24,11 +24,8 @@ export default class Register extends Component {
 
   registerUser = (email, password, confirmPassword, first_name, last_name) => {
     if (password == confirmPassword) {
-      firebase
-        .auth()
-
+      firebase.auth()
         .createUserWithEmailAndPassword(email, password)
-
         .then((userCredential) => {
           alert('User registered!!');
           this.props.navigation.replace('Login');

@@ -1,6 +1,13 @@
-import firebase from "firebase";
-//require("@firebase/firestore");
 
+// Import the functions you need from the SDKs you need
+import firebase from "firebase/compat/app";
+import 'firebase/compat/auth'
+import 'firebase/compat/database'
+//require('firebase/auth')
+// TODO: Add SDKs for Firebase products that you want to use
+// https://firebase.google.com/docs/web/setup#available-libraries
+
+// Your web app's Firebase configuration
 const firebaseConfig = {
   apiKey: "AIzaSyCCF7TH5EOePm0ZQwTPLkH9O751vWiUoII",
   authDomain: "car-pool-a1f90.firebaseapp.com",
@@ -11,6 +18,9 @@ const firebaseConfig = {
   appId: "1:301339773836:web:dfbad7b332f4fcd63ce4a9"
 };
 
-firebase.initializeApp(firebaseConfig);
+const app = firebase.initializeApp(firebaseConfig)
+
+//const auth = auth(app)
+
 
 export default firebase

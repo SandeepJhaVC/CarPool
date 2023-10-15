@@ -3,7 +3,7 @@ import { createDrawerNavigator } from "@react-navigation/drawer";
 import StackNavigator from "./StackNavigator";
 import Profile from "../screens/Profile";
 import Logout from "../screens/Logout";
-import firebase from "firebase";
+import firebase from "../config";
 
 const Drawer = createDrawerNavigator();
 
@@ -26,7 +26,7 @@ class DrawerNavigator extends Component {
 
   componentWillUnmount() {
     // Remove the listener when the component is unmounted
-    this.dataRef.off('value', this.handleDataChange);
+    //this.dataRef.off('value', this.handleDataChange);
   }
 
   handleDataChange = (snapshot) => {

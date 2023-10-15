@@ -11,7 +11,7 @@ import {
 } from 'react-native';
 import { RFValue } from 'react-native-responsive-fontsize';
 
-import firebase from 'firebase';
+import firebase from '../config';
 
 export default class Profile extends Component {
   constructor(props) {

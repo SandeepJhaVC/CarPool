@@ -9,7 +9,7 @@ import {
 } from 'react-native';
 import { RFValue } from 'react-native-responsive-fontsize';
 
-import firebase from 'firebase';
+import firebase from '../config';
 
 export default class LoginScreen extends Component {
   constructor(props) {
@@ -22,12 +22,18 @@ export default class LoginScreen extends Component {
     };
   }
 
+  
+
   signIn = async (email, password) => {
     try {
-      await firebase.auth().signInWithEmailAndPassword(email, password);
-      this.props.navigation.replace('Home');
+      await firebase.auth().signInWithEmailAndPassword(email, password)
+              .then((userCredential) => {
+                alert('Logged in');
+                this.props.navigation.replace('Home');
+              })
     } catch (error) {
-      alert(error.message);
+      //alert(error.message);
+      console.log(error)
     }
   };
   
@@ -76,6 +82,51 @@ export default class LoginScreen extends Component {
     );
   }
 }
+
+/*import React, { useState } from 'react';
+import { View, Text, Button, StyleSheet, TextInput } from 'react-native';
+import { RFValue } from 'react-native-responsive-fontsize';
+import firebase from '../config'
+
+export default function LoginScreen() {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+
+  var signIn = async () => {
+    console.log("called sign in")
+    try {
+      await firebase.auth().signInWithEmailAndPassword(email, password);
+      this.props.navigation.replace('Home');
+
+      // The user is now signed in!
+    } catch (error) {
+      console.log(error)
+      // Handle the error.
+    }
+  };
+
+  return (
+    <View>
+      <Text>Email:</Text>
+      <TextInput
+        value={email}
+        onChangeText={setEmail}
+      />
+
+      <Text>Password:</Text>
+      <TextInput
+        value={password}
+        onChangeText={setPassword}
+        secureTextEntry
+      />
+
+      <Button
+        title="Sign In"
+        onPress={signIn}
+      />
+    </View>
+  );
+}*/
 
 const styles = StyleSheet.create({
   loginContainer: {
