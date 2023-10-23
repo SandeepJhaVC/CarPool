@@ -4,8 +4,9 @@ import { createMaterialBottomTabNavigator } from '@react-navigation/material-bot
 import { RFValue } from 'react-native-responsive-fontsize';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import firebase from '../config';
-import Car from '../screens/Car';
-import Rider from '../screens/Rider'
+import Pooler from '../screens/Pooler';
+import Pool from '../screens/Pool'
+import Chat from '../screens/Chat'
 
 const Tab = createMaterialBottomTabNavigator();
 
@@ -56,15 +57,18 @@ export default class BottomTabNavigator extends Component {
               iconName = focused ? 'man' : 'man-outline';
             } else if (route.name === 'Pooler') {
               iconName = focused ? 'car' : 'car-outline';
+            } else if (route.name ==='Chat'){
+              iconName = focused? 'chatbubble-ellipses' : 'chatbubble-ellipses-outline';
             }
             return (
-              <Ionicons name={iconName} size={RFValue(25)} color={color} style={{padding:0.5}} />
+              <Ionicons name={iconName} size={RFValue(20)} color={color} style={{padding:RFValue(0),margin:-5}} />
             );
           },
         })}
         barStyle={this.state.light_theme ? styles.tabBarLight : styles.tabBar}>
-        <Tab.Screen name="Pool" component={Rider} />
-        <Tab.Screen name="Pooler" component={Car} />
+        <Tab.Screen name="Pool" component={Pool} />
+        <Tab.Screen name="Pooler" component={Pooler} />
+        <Tab.Screen name="Chat" component={Chat} />
       </Tab.Navigator>
     );
   }

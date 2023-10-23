@@ -33,9 +33,8 @@ export default class Rider extends Component {
 
   componentWillUnmount() {
     // Remove the listener when the component is unmounted
-    //this.dataRef.off('value', this.handleDataChange);
-
-    //this.themeRef.off('value', this.handleThemeChange);
+    this.dataRef.off('value', this.handleDataChange);
+    this.themeRef.off('value', this.handleThemeChange);
   }
 
   handleDataChange = (snapshot) => {
@@ -60,6 +59,7 @@ export default class Rider extends Component {
   };
 
   async fetchUser() {
+    
     try {
       const snapshot = await firebase.database().ref('/details/').once('value');
       const data = snapshot.val();
@@ -73,6 +73,8 @@ export default class Rider extends Component {
         isDataFetched: true, // Update the flag
         detail: main,
       });
+
+      
     } catch (error) {
       console.error('Error fetching data:', error);
     }
@@ -180,9 +182,7 @@ export default class Rider extends Component {
           <FlatList
             data={this.state.detail}
             renderItem={this.renderItem}
-            style={
-              this.state.light_theme ? styles.flatlist : styles.flatlistLight
-            }
+            style={{backgroundColor: this.state.light_theme ? '#2f4f4f':'#87cefa'}}
           />
         </View>
       </View>
@@ -191,12 +191,6 @@ export default class Rider extends Component {
 }
 
 const styles = StyleSheet.create({
-  flatlist: {
-    backgroundColor: '#2f4f4f',
-  },
-  flatlistLight: {
-    backgroundColor: '#87cefa',
-  },
   list:{
     backgroundColor:"#696969",
     borderTopLeftRadius: 5,
