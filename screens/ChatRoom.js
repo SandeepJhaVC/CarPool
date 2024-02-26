@@ -15,7 +15,8 @@ export default class ChatRoom extends Component {
         list: [], // To store the list of chat rooms
         message:'',
         name:'',
-        chat:false
+        chat:false,
+        roomInfo:[]
       };
   }
   
@@ -30,7 +31,7 @@ export default class ChatRoom extends Component {
     this.checkRoom();
 
     // Set up a real-time listener
-    const userIDs = [firebase.auth().currentUser.uid, this.props.route.params.user_id];
+    const userIDs = [firebase.auth().currentUser.uid, this.props.route.params.chat.user_id];
     userIDs.sort();
     const chatRoomID = userIDs.join('_');
     this.dataRef = firebase.database().ref('/chatList/' + chatRoomID);
@@ -87,44 +88,6 @@ export default class ChatRoom extends Component {
     });
   }
 
-  async sendMessage() {
-    await this.checkRoom()
-    if (this.state.message !== '') {
-      const senderID = firebase.auth().currentUser.uid;
-      const receiverID = this.props.route.params.user_id;
-  
-      // Call the checkRoom function to determine the room ID
-      const roomID = this.checkRoom(senderID, receiverID);
-  
-      if (roomID) {
-        // Room already exists, send the message to the existing room
-        const date = new Date();
-        const messageDetails = {
-          date: date.toString(),
-          sender_id: senderID,
-          receiver_id: receiverID,
-          message: this.state.message,
-          receiver_name: this.props.route.params.name,
-          sender_name: this.state.name,
-        };
-  
-        // Use the roomID to set the message in the appropriate room
-        await firebase
-          .database()
-          .ref('/chatList/' + roomID + '/' + date.toString().slice(16, 24))
-          .set(messageDetails);
-      } else {
-        // Room doesn't exist, you can handle this case as needed
-        console.log('Room does not exist. You can handle this case here.');
-      }
-  
-      this.setState({ message: '' });
-    } else {
-      return;
-    }
-  }
-  
-
   async fetchChatRoomInfo() {
     const chatRoomsRef = firebase.database().ref('/chatList');
   
@@ -134,6 +97,7 @@ export default class ChatRoom extends Component {
         const roomInfo = [];
         Object.keys(chatRooms).forEach((roomID) => {
           const [user1_id, user2_id] = roomID.split('_');
+          console.log(user1_id)
           roomInfo.push({
             roomID,
             user1_id,
@@ -143,6 +107,7 @@ export default class ChatRoom extends Component {
   
         // Set roomInfo as a component state
         this.setState({ roomInfo });
+
       }
     });
   }
@@ -151,30 +116,26 @@ export default class ChatRoom extends Component {
     await this.fetchChatRoomInfo();
 
     const senderID = firebase.auth().currentUser.uid;
-    const receiverID = this.props.route.params.user_id;
-  
-    // Initialize roomInfo with an empty array
-    this.setState({ roomInfo: [] });
-  
-    // Fetch chat room information and populate roomInfo
-    
+    const receiverID = this.props.route.params.chat.user_id;
   
     // Access roomInfo from the component's state
+    console.log(this.state.roomInfo)
     const roomInfo = this.state.roomInfo;
+    console.log(roomInfo)
   
-    console.log('senderID:', senderID);
-    console.log('receiverID:', receiverID);
-    console.log('roomInfo:', roomInfo);
+    //console.log('senderID:', senderID);
+    //console.log('receiverID:', receiverID);
+    //console.log('roomInfo:', roomInfo);
   
     const existingRoom = roomInfo.find((room) => {
-      console.log('Checking room:', room);
+      console.log('Checking room');
       return (room.user1_id === senderID && room.user2_id === receiverID) ||
             (room.user1_id === receiverID && room.user2_id === senderID);
     });
   
     if (existingRoom) {
       // Use the existing room
-      console.log('Using existing room:', existingRoom.roomID);
+      console.log('Using existing room')
       this.dataRef = firebase.database().ref('/chatList/' + existingRoom.roomID);
     } else {
       // Create a new room
@@ -186,10 +147,53 @@ export default class ChatRoom extends Component {
     }
   }
 
+  async sendMessage() {
+    await this.checkRoom()
+    if (this.state.message !== '') {
+      const senderID = firebase.auth().currentUser.uid;
+      const receiverID = this.props.route.params.chat.user_id;
+  
+      // Call the checkRoom function to determine the room ID
+      const roomID = this.checkRoom(senderID, receiverID);
+      const userIDs = [senderID, receiverID];
+      userIDs.sort(); // Sort to ensure consistency
+      const chatRoomID = userIDs.join('_');
+  
+      if (roomID) {
+        // Room already exists, send the message to the existing room
+        const date = new Date();
+        const messageDetails = {
+          date: date.toString(),
+          sender_id: senderID,
+          receiver_id: receiverID,
+          message: this.state.message,
+          receiver_name: this.props.route.params.chat.name,
+          sender_name: this.state.name,
+        };
+        
+        // Use the roomID to set the message in the appropriate room
+        await firebase
+          .database()
+          .ref('/chatList/' + chatRoomID + '/' + date.toString().slice(16, 24))
+          .set(messageDetails);
+
+        console.log("send")
+      } else {
+        // Room doesn't exist, you can handle this case as needed
+        console.log('Room does not exist');
+      }
+      console.log("out")
+  
+      this.setState({ message: '' });
+    } else {
+      return console.log("else");
+    }
+  }
+
   async addName(){
     if (this.state.chat == true){
       let name={
-        reciever_name: this.props.route.params.name,
+        reciever_name: this.props.route.params.chat.name,
         sender_name: this.state.name
       }
       await firebase
@@ -250,10 +254,12 @@ export default class ChatRoom extends Component {
     );
   };
 
+  
+
   render(){
     return(
       <View>
-        <Text>{this.props.route.params.name}</Text>
+        <Text>{this.props.route.params.chat.name}</Text>
         <View
           style={{flex:1}}>
           <FlatList

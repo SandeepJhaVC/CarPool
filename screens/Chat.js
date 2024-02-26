@@ -59,7 +59,7 @@ export default class Chat extends Component {
   renderItem =({item})=>{
     console.log(item)
     return(
-      <TouchableOpacity onPress={()=>this.props.navigation.navigate("ChatRoom")}>
+      <TouchableOpacity onPress={()=>this.props.navigation.navigate("ChatRoom",{chat:item})}>
         <View style={this.state.light_theme ? styles.list : styles.listLight}>
           <ListItem bottomDivider containerStyle={this.state.light_theme ? styles.listItemLight : styles.listItem}>
             <Icon

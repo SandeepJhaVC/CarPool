@@ -152,7 +152,7 @@ export default class Details extends Component {
                 </Text>
             </Text>
               
-            <TouchableOpacity onPress={()=>this.props.navigation.navigate("ChatRoom",{user_id: this.props.route.params.details.user_id, name:this.props.route.params.details.name})}>
+            <TouchableOpacity onPress={()=>this.props.navigation.navigate("ChatRoom",{chat: this.props.route.params.details})}>
 
               <Icon type={'ionicon'}
                   name={'chatbox-ellipses'}
