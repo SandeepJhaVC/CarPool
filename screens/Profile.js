@@ -8,8 +8,10 @@ import {
   StatusBar,
   Image,
   Switch,
+  TouchableOpacity
 } from 'react-native';
 import { RFValue } from 'react-native-responsive-fontsize';
+import { Icon } from 'react-native-elements';
 
 import firebase from '../config';
 
@@ -52,6 +54,30 @@ export default class Profile extends Component {
       name: name,
     });
   }
+  
+  async deleteUser() {
+    try {
+      const currentUser = firebase.auth().currentUser;
+  
+      // Delete user data from the Realtime Database
+      await firebase
+        .database()
+        .ref('/users/' + currentUser.uid)
+        .remove()
+        .then(()=>console.log("user deleted"));
+  
+      // Delete user from Authentication
+      await currentUser.delete().then(()=>console.log("user data deleted"));
+  
+      // Navigate to the login screen after successful deletion
+      this.props.navigation.replace('Login');
+    } catch (error) {
+      console.error('Error deleting user:', error);
+      alert('Error deleting user');
+    }
+  }
+  
+  
 
   render() {
     return (
@@ -108,6 +134,15 @@ export default class Profile extends Component {
               value={this.state.isEnabled}
             />
           </View>
+
+          <TouchableOpacity onPress={() => this.deleteUser()}>
+                <Icon
+                  type={'ionicon'}
+                  name={'close'}
+                  size={RFValue(30)}
+                  color={this.state.light_theme ? 'black' : 'white'}
+                />
+          </TouchableOpacity>
 
           <View style={{ flex: 0.3 }} />
         </View>
