@@ -42,10 +42,9 @@ export default class Chat extends Component {
     try {
       const snapshot = await firebase.database().ref('/chatList/').once('value');
       const data = snapshot.val();
-      console.log(data)
       if (data) {
-        const main = Object.values(data);
-        console.log(main)
+        let main = Object.values(data).filter(item => item !== "");
+  
         this.setState({
           chatList: main,
           isDataFetched: true,
@@ -55,9 +54,10 @@ export default class Chat extends Component {
       console.error('Error fetching data:', error);
     }
   }
+  
+  
 
   renderItem =({item})=>{
-    console.log(item)
     return(
       <TouchableOpacity onPress={()=>this.props.navigation.navigate("ChatRoom",{chat:item})}>
         <View style={this.state.light_theme ? styles.list : styles.listLight}>

@@ -16,7 +16,8 @@ export default class ChatRoom extends Component {
         message:'',
         name:'',
         chat:false,
-        roomInfo:[]
+        roomInfo:[],
+        placeHolder:'type your message'
       };
   }
   
@@ -89,28 +90,31 @@ export default class ChatRoom extends Component {
   }
 
   async fetchChatRoomInfo() {
-    const chatRoomsRef = firebase.database().ref('/chatList');
-  
-    chatRoomsRef.once('value', (snapshot) => {
+    try {
+      const chatRoomsRef = firebase.database().ref('/chatList');
+      const snapshot = await chatRoomsRef.once('value');
       const chatRooms = snapshot.val();
       if (chatRooms) {
         const roomInfo = [];
         Object.keys(chatRooms).forEach((roomID) => {
-          const [user1_id, user2_id] = roomID.split('_');
-          console.log(user1_id)
-          roomInfo.push({
-            roomID,
-            user1_id,
-            user2_id,
-          });
+          if (roomID !== "null") { // Check if the roomID is not "null"
+            const [user1_id, user2_id] = roomID.split('_');
+            roomInfo.push({
+              roomID,
+              user1_id,
+              user2_id,
+            });
+          }
         });
   
         // Set roomInfo as a component state
         this.setState({ roomInfo });
-
       }
-    });
+    } catch (error) {
+      console.error('Error fetching chat room info:', error);
+    }
   }
+  
 
   async checkRoom() {
     await this.fetchChatRoomInfo();
@@ -119,27 +123,21 @@ export default class ChatRoom extends Component {
     const receiverID = this.props.route.params.chat.user_id;
   
     // Access roomInfo from the component's state
-    console.log(this.state.roomInfo)
     const roomInfo = this.state.roomInfo;
-    console.log(roomInfo)
-  
-    //console.log('senderID:', senderID);
-    //console.log('receiverID:', receiverID);
-    //console.log('roomInfo:', roomInfo);
-  
+
     const existingRoom = roomInfo.find((room) => {
-      console.log('Checking room');
+      //console.log('Checking room');
       return (room.user1_id === senderID && room.user2_id === receiverID) ||
             (room.user1_id === receiverID && room.user2_id === senderID);
     });
   
     if (existingRoom) {
       // Use the existing room
-      console.log('Using existing room')
+      //console.log('Using existing room')
       this.dataRef = firebase.database().ref('/chatList/' + existingRoom.roomID);
     } else {
       // Create a new room
-      console.log('Creating a new room');
+      //console.log('Creating a new room');
       const userIDs = [senderID, receiverID];
       userIDs.sort(); // Sort to ensure consistency
       const chatRoomID = userIDs.join('_');
@@ -148,47 +146,46 @@ export default class ChatRoom extends Component {
   }
 
   async sendMessage() {
-    await this.checkRoom()
+    await this.checkRoom();
     if (this.state.message !== '') {
-      const senderID = firebase.auth().currentUser.uid;
-      const receiverID = this.props.route.params.chat.user_id;
-  
-      // Call the checkRoom function to determine the room ID
-      const roomID = this.checkRoom(senderID, receiverID);
-      const userIDs = [senderID, receiverID];
-      userIDs.sort(); // Sort to ensure consistency
-      const chatRoomID = userIDs.join('_');
-  
-      if (roomID) {
-        // Room already exists, send the message to the existing room
-        const date = new Date();
-        const messageDetails = {
-          date: date.toString(),
-          sender_id: senderID,
-          receiver_id: receiverID,
-          message: this.state.message,
-          receiver_name: this.props.route.params.chat.name,
-          sender_name: this.state.name,
-        };
-        
-        // Use the roomID to set the message in the appropriate room
-        await firebase
-          .database()
-          .ref('/chatList/' + chatRoomID + '/' + date.toString().slice(16, 24))
-          .set(messageDetails);
-
-        console.log("send")
-      } else {
-        // Room doesn't exist, you can handle this case as needed
-        console.log('Room does not exist');
-      }
-      console.log("out")
-  
-      this.setState({ message: '' });
+        const senderID = firebase.auth().currentUser.uid;
+        const receiverID = this.props.route.params.chat.user_id;
+    
+        // Call the checkRoom function to determine the room ID
+        const roomID = this.checkRoom(senderID, receiverID);
+        const userIDs = [senderID, receiverID];
+        userIDs.sort(); // Sort to ensure consistency
+        const chatRoomID = userIDs.join('_');
+    
+        if (roomID) {
+            // Room already exists, send the message to the existing room
+            const date = new Date();
+            const messageDetails = {
+                date: date.toString(),
+                sender_id: senderID,
+                receiver_id: receiverID,
+                message: this.state.message,
+                receiver_name: this.props.route.params.chat.name,
+                sender_name: this.state.name,
+            };
+            
+            // Use the roomID to set the message in the appropriate room
+            await firebase
+                .database()
+                .ref('/chatList/' + chatRoomID + '/' + date.toString().slice(16, 24))
+                .set(messageDetails);
+        } else {
+            // Room doesn't exist, you can handle this case as needed
+            //console.log('Room does not exist');
+            return
+        }
+    
+        // Reset the message state to empty and update the placeholder
+        this.setState({ message: '', placeholder: 'Type your message' });
     } else {
-      return console.log("else");
+        return;
     }
-  }
+}
 
   async addName(){
     if (this.state.chat == true){
@@ -214,7 +211,7 @@ export default class ChatRoom extends Component {
           }>
           <Icon
             type={'ionicon'}
-            name={'car'}
+            name={'chatbubbles-outline'}
             size={25}
             color={this.state.light_theme?'black':'black'}
           />
@@ -229,9 +226,9 @@ export default class ChatRoom extends Component {
               }}
             >
               <Text>
-              <Text style={{color:this.state.light_theme? '#000000':'#e0ffff' }}> {`${item.message}`} </Text>
+              <Text style={{color:this.state.light_theme? '#000000':'#e0ffff' }}> {`${item.message}`}</Text>
               </Text>
-            </ListItem.Title>
+            </ListItem.Title> 
 
             <ListItem.Subtitle 
               style={{
@@ -242,8 +239,15 @@ export default class ChatRoom extends Component {
               }}
             >
               <Text >
-              <Text style={{color:this.state.light_theme? '#000000':'#e0ffff'}}> 
-                    {/*`${item.date.slice(16,24)}`*/} 
+              <Text style={{color:this.state.light_theme? '#000000':'#e0ffff',
+                            fontSize:15
+                            }}> 
+                    {`${item.sender_name}`} 
+                  </Text>
+              <Text style={{color:this.state.light_theme? '#000000':'#e0ffff',
+                            fontSize:8
+                            }}> 
+                    {`${item.date.slice(16,24)}`} 
                   </Text>
               </Text>
 
@@ -258,10 +262,9 @@ export default class ChatRoom extends Component {
 
   render(){
     return(
-      <View>
+      <View style={styles.appContainer}>
         <Text>{this.props.route.params.chat.name}</Text>
-        <View
-          style={{flex:1}}>
+        <View style={styles.listItem}>
           <FlatList
             data={this.state.list}
             renderItem={this.renderItem}
@@ -271,10 +274,10 @@ export default class ChatRoom extends Component {
         </View>
         <TextInput
             onChangeText={(text)=>this.setState({message:text})}
-            placeholder={this.state.message}
+            placeholder={this.state.placeHolder}
             placeholderTextColor={'#FFFFFF'}
+            style={{color:'grey'}}
             autoFocus
-            style={{}}
           />
         <TouchableOpacity onPress={()=>this.sendMessage()}>
           <Text>
@@ -289,6 +292,8 @@ export default class ChatRoom extends Component {
 const styles = StyleSheet.create({
   appContainer: {
     flex: 1,
+    padding:15,
+    //paddingBottom:50,
     backgroundColor: '#2f4f4f'
   },
   appContainerLight: {
@@ -296,7 +301,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#87cefa'
   },
   listItem: {
-    flex: 1,
+    flex: 0.5,
     backgroundColor: '#808080',
     
   },
