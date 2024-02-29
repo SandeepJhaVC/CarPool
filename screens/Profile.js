@@ -39,38 +39,49 @@ export default class Profile extends Component {
     this.fetchUser();
   }
 
-  async fetchUser() {
-    let theme, name;
-    await firebase
+  fetchUser() {
+    firebase
       .database()
       .ref('/users/' + firebase.auth().currentUser.uid)
-      .on('value', function (snapshot) {
-        theme = snapshot.val().current_theme;
-        name = `${snapshot.val().first_name} ${snapshot.val().last_name}`;
+      .on('value', (snapshot) => {
+        const userData = snapshot.val();
+        const theme = userData.current_theme;
+        const name = `${userData.first_name} ${userData.last_name}`;
+  
+        this.setState({
+          light_theme: theme === 'light',
+          isEnabled: theme === 'dark',
+          name: name,
+        });
       });
-    this.setState({
-      light_theme: theme === 'light' ? true : false,
-      isEnabled: theme === 'light' ? false : true,
-      name: name,
-    });
   }
+  
+  
   
   async deleteUser() {
     try {
       const currentUser = firebase.auth().currentUser;
-  
-      // Delete user data from the Realtime Database
+      
+      this.props.navigation.replace('Login');
+
+      // Delete user
       await firebase
         .database()
         .ref('/users/' + currentUser.uid)
         .remove()
-        .then(()=>console.log("user deleted"));
-  
-      // Delete user from Authentication
-      await currentUser.delete().then(()=>console.log("user data deleted"));
-  
+        
+      console.log("user data deleted")
+      
+      try{
+        //delete data
+        await currentUser.delete()
+      
+        console.log("user deleted")
+      } catch(error){
+        console.error(error)
+      }
       // Navigate to the login screen after successful deletion
-      this.props.navigation.replace('Login');
+      
     } catch (error) {
       console.error('Error deleting user:', error);
       alert('Error deleting user');
@@ -184,7 +195,7 @@ const styles = StyleSheet.create({
   titleContainer: {
     flex: 0.1,
     justifyContent: 'center',
-    allignitems: 'center',
+    allignItems: 'center',
   },
 
   appTitleText: {
