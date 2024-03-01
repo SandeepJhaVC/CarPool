@@ -13,7 +13,7 @@ const Stack = createStackNavigator();
 const StackNav = () => {
   return (
     <Stack.Navigator
-      initialRouteName="Login"
+      initialRouteName="Register"
       screenOptions={{
         headerShown: false,
         gestureEnabled: false,
