@@ -18,7 +18,7 @@ export default class Chat extends Component {
 
   componentDidMount() {
     // Set up a real-time listener
-    this.fetchChatList();
+    this.fetchChatRoomInfo();
     this.dataRef = firebase.database().ref('/users/' + firebase.auth().currentUser.uid);
     this.dataRef.on('value', this.handleThemeChange);
   }
@@ -38,24 +38,35 @@ export default class Chat extends Component {
     }
   };
 
-  fetchChatList = async () => {
+  async fetchChatRoomInfo() {
     try {
-      const snapshot = await firebase.database().ref('/chatList/').once('value');
-      const data = snapshot.val();
-      if (data) {
-        let main = Object.values(data).filter(item => item !== "");
-  
-        this.setState({
-          chatList: main,
-          isDataFetched: true,
+      const currentUserID = firebase.auth().currentUser.uid;
+      const chatRoomsRef = firebase.database().ref('/chatList');
+      const snapshot = await chatRoomsRef.once('value');
+      const chatRooms = snapshot.val();
+      if (chatRooms) {
+        const roomInfo = [];
+        Object.keys(chatRooms).forEach((roomID) => {
+          if (roomID !== "null") { // Check if the roomID is not "null"
+            const [user1_id, user2_id] = roomID.split('_');
+            roomInfo.push({
+              roomID,
+              user1_id,
+              user2_id,
+            });
+          }
         });
+
+        if(room.user1_id === currentUserID){
+          console.log(room.roomID)
+        };
+        
       }
     } catch (error) {
-      console.error('Error fetching data:', error);
+      console.error('Error fetching chat room info:', error);
     }
   }
-  
-  
+
 
   renderItem =({item})=>{
     return(

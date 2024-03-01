@@ -71,6 +71,23 @@ export default class Profile extends Component {
         .remove()
         
       console.log("user data deleted")
+
+      try {
+        const db = firebase.database()
+        const snapshot = await db.ref('/details/').once('value')
+        const data = snapshot.val();
+        let main;
+  
+        if (data) {
+          main = Object.values(data); // Extract values from data object
+        }
+        
+        db.ref('/details/'+main.user_id).remove()
+
+        console.log('detail deleted')
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      }
       
       try{
         //delete data

@@ -77,17 +77,23 @@ export default class ChatRoom extends Component {
   };
 
   async fetchUser() {
-    let name;
-    await firebase
-      .database()
-      .ref('/users/' + firebase.auth().currentUser.uid)
-      .on('value', function (snapshot) {
-        name = `${snapshot.val().first_name}`;
-      });
-    this.setState({
-      name: name,
-    });
-  }
+    try {
+        const snapshot = await firebase
+            .database()
+            .ref('/users/' + firebase.auth().currentUser.uid)
+            .once('value');
+
+        const name = snapshot.val().first_name;
+
+        this.setState({
+            name: name,
+        });
+    } catch (error) {
+        // Handle any errors that might occur during the fetching process
+        console.error("Error fetching user data:", error);
+    }
+}
+
 
   async fetchChatRoomInfo() {
     try {
