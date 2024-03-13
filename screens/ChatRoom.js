@@ -22,32 +22,32 @@ export default class ChatRoom extends Component {
   }
   
   async componentDidMount() {
-  try {
-    this.fetchUser();
-
-    // Fetch chat room information and populate roomInfo
-    await this.fetchChatRoomInfo();
-
-    // Call checkRoom only after roomInfo is populated
-    this.checkRoom();
-
-    // Set up a real-time listener
-    const userIDs = [firebase.auth().currentUser.uid, this.props.route.params.chat.user_id];
-    userIDs.sort();
-    const chatRoomID = userIDs.join('_');
-    this.dataRef = firebase.database().ref('/chatList/' + chatRoomID);
-    this.dataRef.on('value', this.handleDataChange);
-
-    // Set up the theme listener
-    this.themeRef = firebase.database().ref('/users/' + firebase.auth().currentUser.uid);
-    this.themeRef.on('value', this.handleThemeChange);
-
-    // Add the name to the chat (you might want to call this function conditionally)
-    this.addName();
-  } catch (error) {
-    console.error('Error in componentDidMount:', error);
+    try {
+      // Fetch user details
+      this.fetchUser();
+      this.passedData()
+  
+      // Check if the user is navigating from the Chat screen
+      if (this.props.route.params.chat) {
+        // Set up the chat room based on the selected chat room
+        this.checkRoom();
+      } else {
+        // Proceed as usual
+        // Set up a real-time listener
+        const userIDs = [firebase.auth().currentUser.uid, this.props.route.params.chat.user_id];
+        userIDs.sort();
+        const chatRoomID = userIDs.join('_');
+        this.dataRef = firebase.database().ref('/chatList/' + chatRoomID);
+        this.dataRef.on('value', this.handleDataChange);
+      }
+  
+      // Set up the theme listener
+      this.themeRef = firebase.database().ref('/users/' + firebase.auth().currentUser.uid);
+      this.themeRef.on('value', this.handleThemeChange);
+    } catch (error) {
+      console.error('Error in componentDidMount:', error);
+    }
   }
-}
   
   componentWillUnmount() {
     // Remove the listener when the component is unmounted
@@ -69,12 +69,25 @@ export default class ChatRoom extends Component {
     const data = snapshot.val();
     if (data) {
       const main = Object.values(data);
+      console.log("main")
       this.setState({
         list: main,
         isDataFetched: true,
       });
+    }else if (this.props.route.params.chat && this.props.route.params.chat.messages) {
+      console.log("props",this.props.route.params.chat.messages)
+      // If data is passed from the chat screen
+      const { messages } = this.props.route.params.chat;
+      this.setState({
+        list: messages,
+        isDataFetched: true,
+      });
     }
   };
+
+  passedData(){
+    //console.log("data",this.props.route.params.chat)
+  }
 
   async fetchUser() {
     try {
@@ -152,18 +165,20 @@ export default class ChatRoom extends Component {
   }
 
   async sendMessage() {
+
     await this.checkRoom();
+
     if (this.state.message !== '') {
         const senderID = firebase.auth().currentUser.uid;
         const receiverID = this.props.route.params.chat.user_id;
-    
+        
         // Call the checkRoom function to determine the room ID
         const roomID = this.checkRoom(senderID, receiverID);
         const userIDs = [senderID, receiverID];
         userIDs.sort(); // Sort to ensure consistency
         const chatRoomID = userIDs.join('_');
     
-        if (roomID) {
+        if (roomID) {console.log(senderID,receiverID)
             // Room already exists, send the message to the existing room
             const date = new Date();
             const messageDetails = {
@@ -174,12 +189,13 @@ export default class ChatRoom extends Component {
                 receiver_name: this.props.route.params.chat.name,
                 sender_name: this.state.name,
             };
-            
+            console.log(5)
             // Use the roomID to set the message in the appropriate room
             await firebase
                 .database()
                 .ref('/chatList/' + chatRoomID + '/' + date.toString().slice(16, 24))
                 .set(messageDetails);
+                
         } else {
             // Room doesn't exist, you can handle this case as needed
             //console.log('Room does not exist');
@@ -207,6 +223,7 @@ export default class ChatRoom extends Component {
   }
 
   renderItem = ({ item }) => {
+    
     return (
       <View style={{ backgroundColor:this.state.light_theme?'#2f4f4f':'#87cefa',margin:5}}>
         <ListItem
@@ -248,7 +265,7 @@ export default class ChatRoom extends Component {
               <Text style={{color:this.state.light_theme? '#000000':'#e0ffff',
                             fontSize:15
                             }}> 
-                    {`${item.sender_name}`} 
+                    {`${item.sender_name}`} {console.log("item:",item)}
                   </Text>
               <Text style={{color:this.state.light_theme? '#000000':'#e0ffff',
                             fontSize:8

@@ -19,6 +19,7 @@ export default class Chat extends Component {
   componentDidMount() {
     // Set up a real-time listener
     this.fetchChatRoomInfo();
+    this.fetchUser()
     this.dataRef = firebase.database().ref('/users/' + firebase.auth().currentUser.uid);
     this.dataRef.on('value', this.handleThemeChange);
   }
@@ -49,6 +50,7 @@ export default class Chat extends Component {
         Object.keys(chatRooms).forEach((roomID) => {
           if (roomID !== "null") { // Check if the roomID is not "null"
             const [user1_id, user2_id] = roomID.split('_');
+            console.log(user1_id)
             roomInfo.push({
               roomID,
               user1_id,
@@ -56,10 +58,13 @@ export default class Chat extends Component {
             });
           }
         });
+        //console.log(roomInfo)
 
-        if(room.user1_id === currentUserID){
-          console.log(room.roomID)
-        };
+        // Check each room for user id matching the current user id
+        const matchingRooms = roomInfo.filter((room) => {
+          return room.user1_id === currentUserID || room.user2_id === currentUserID;
+        });
+        this.setState({ chatList: matchingRooms });
         
       }
     } catch (error) {
@@ -67,10 +72,56 @@ export default class Chat extends Component {
     }
   }
 
+  async fetchUser() {
+    try {
+      const snapshot = await firebase.database().ref('/users').once('value');
+      const data = snapshot.val();
+      let detail = [];
+  
+      if (data) {
+        // Extract user IDs and details from data object
+        detail = Object.entries(data).map(([userID, userDetails]) => ({
+          userID,
+          ...userDetails
+        }));
+      }
+  
+      this.setState({
+        isDataFetched: true, // Update the flag
+        detail: detail,
+      });
+    } catch (error) {
+      console.error('Error fetching data:', error);
+    }
+  }
+  
 
-  renderItem =({item})=>{
-    return(
-      <TouchableOpacity onPress={()=>this.props.navigation.navigate("ChatRoom",{chat:item})}>
+
+  renderItem = ({ item }) => {
+    const currentUserID = firebase.auth().currentUser.uid;
+  
+    let otherUserID;
+    if (item.user1_id === currentUserID) {
+      otherUserID = item.user2_id;
+    } else {
+      otherUserID = item.user1_id;
+    }
+
+    let names;
+    for (let i = 0; i < this.state.detail.length; i++) {
+      if (this.state.detail[i].userID === otherUserID) {
+
+        first_name=this.state.detail[i].first_name
+        last_name=this.state.detail[i].last_name
+        const first_last = [first_name, last_name]
+        names= first_last.join(' ')
+
+        break; // Stop iterating once the other user is found
+      }
+    }
+  
+    return (
+      <TouchableOpacity onPress={() => this.props.navigation.navigate("ChatRoom", { chat: item })}>
         <View style={this.state.light_theme ? styles.list : styles.listLight}>
           <ListItem bottomDivider containerStyle={this.state.light_theme ? styles.listItemLight : styles.listItem}>
             <Icon
@@ -81,16 +132,16 @@ export default class Chat extends Component {
             />
             <ListItem.Content>
               <ListItem.Title style={styles.listTitle}>
-                <Text>
-                <Text style={styles.listTitle}>{item.message}</Text>
-                </Text>
+                <Text>{names}</Text>
               </ListItem.Title>
             </ListItem.Content>
           </ListItem>
         </View>
       </TouchableOpacity>
-    )
+    );
   }
+  
+  
 
   render() {
     return (

@@ -1,5 +1,4 @@
-import React, { Component } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { Component } from 'react';
 import firebase from '../config';
 
 export default class Logout extends Component {
